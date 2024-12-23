@@ -12,7 +12,7 @@ namespace Game.GameMazeRunners
         {
             FichasPlayer1 = new List<Ficha> ();
             FichasPlayer2 = new List<Ficha> ();
-            laberinto = new Laberinto (5, 5);
+            laberinto = new Laberinto (10, 10);
             InicializarFichas();
             //Logica para indicar un movimiento valido
             SeleccionarFichas(FichasPlayer1, FichasPlayer2);
@@ -63,5 +63,4 @@ namespace Game.GameMazeRunners
         }
     }
 }
-
 

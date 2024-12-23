@@ -26,14 +26,4 @@ namespace Game.Casillas
 
         // Métodos específicos para trampas
     }
-    public class Obstaculo : Casilla
-    {
-        public enum TipoDeObstaculo {}
-        public TipoDeObstaculo tipoDeObstaculo { get; set; }
-        public Obstaculo(int x, int y, TipoDeObstaculo tipodeObstaculo) : base(x, y, TipoDecasilla.obstaculo)
-        {
-            tipoDeObstaculo = tipodeObstaculo;
-        }
-        //Metodos para crear obstaculos
-    }
 }
