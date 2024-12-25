@@ -1,6 +1,7 @@
 ﻿using Game.Fichas;
 using Game.Laberintos;
 using Game.Casillas;
+using Game.InterfazGrafica;
 namespace Game.GameMazeRunners
 {
     public class GameMazeRunner
@@ -8,12 +9,14 @@ namespace Game.GameMazeRunners
         private List <Ficha> FichasPlayer1;
         private List <Ficha> FichasPlayer2;
         private Laberinto laberinto;
+        private Trampa trampa;
         public GameMazeRunner()
         {
             FichasPlayer1 = new List<Ficha> ();
             FichasPlayer2 = new List<Ficha> ();
             laberinto = new Laberinto (10, 10);
             InicializarFichas();
+            trampa = new Trampa(Trampa.TipoDeTrampa.Begin, laberinto, FichasPlayer1);
             //Logica para indicar un movimiento valido
             SeleccionarFichas(FichasPlayer1, FichasPlayer2);
         }
@@ -43,20 +46,7 @@ namespace Game.GameMazeRunners
         {
             //Logica de Seleccion de fichas de cada jugador
         }
-        public void MovimientoDeFichas()
-        {
-            //if (MovimientoValido(x, y))
-        }
-        public bool MovimientoValido(int x, int y)
-        {
-            //Logica para indicar un movimiento valido
-            return true;
-        }
-        public void Turnos()
-        {
-            //logica para los turnos usando IncrementarTurno
-            //Condicion de victoria
-        }
+        
         public void EndGame()
         {
             //logica para finalizar el juego

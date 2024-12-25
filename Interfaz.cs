@@ -1,22 +1,28 @@
 namespace Game.InterfazGrafica
 {
-    public class Interfaz
+    internal class Vetana(int ancho, int largo)
     {
-        public void ShowMenu()
+        int ancho = ancho;
+        int largo = largo;
+        private void Init()
         {
-            //muestra el menu
+            Console.SetWindowSize(ancho, largo);
         }
-        public void ShowLaberinto()
-        {
-            //muestra interfaz del juego
-        }
-        public void Victoria()
-        {
-            //Muestra pantalla de victoria
-        }
-        public void Update()
-        {
-            //actualiza la interfaz
-        }
+        // public void ShowMenu()
+        // {
+        //     //muestra el menu
+        // }
+        // public void ShowLaberinto()
+        // {
+        //     //muestra interfaz del juego
+        // }
+        // public void Victoria()
+        // {
+        //     //Muestra pantalla de victoria
+        // }
+        // public void Update()
+        // {
+        //     //actualiza la interfaz
+        // }
     }
 }

@@ -15,10 +15,21 @@ namespace Game.Fichas
             this.TiempoDeEnfriamiento = TiempoDeEnfriamiento;
             TurnosDeRecarga = 0;
         }
+        public bool EstaEnPos(int x, int y)
+        {
+            return true;
+        }
+        public void ColocarFicha(int x, int y)
+        {
+            
+        }
         public bool PuedeUsarPoder()
         {
-            if (TurnosDeRecarga < TiempoDeEnfriamiento) return false;
-            else return true;
+            return TurnosDeRecarga < TiempoDeEnfriamiento;
+        }
+        public void NopuedeUsarPoder()
+        {
+            TiempoDeEnfriamiento = 5;
         }
         public void UsarPoder()
         {
@@ -31,6 +42,21 @@ namespace Game.Fichas
         public void IncrementarTurno()
         {
             TurnosDeRecarga ++;
+        }
+        public bool MovimientoValido(int x, int y)
+        {
+            //Logica para indicar un movimiento valido
+            return true;
+        }
+        public void MovimientoDeFichas()
+        {
+            //if (MovimientoValido(x, y))
+        }
+        
+        public void Turnos()
+        {
+            //logica para los turnos usando IncrementarTurno
+            //Condicion de victoria
         }
     }
 }

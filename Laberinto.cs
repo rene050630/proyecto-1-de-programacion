@@ -7,7 +7,7 @@ namespace Game.Laberintos
 {
     public class Laberinto 
     {
-        private bool [,] laberinto;
+        public bool [,] laberinto;
         public int Filas;
         public int Columnas;
         public Laberinto (int filas, int columnas)
@@ -16,7 +16,7 @@ namespace Game.Laberintos
             Columnas = columnas;
             laberinto = new bool [filas, columnas];
             GenerarLaberinto ();
-            System.Console.WriteLine("holas");
+            //System.Console.WriteLine("holas");
             ColocarParedes(filas, columnas, laberinto);
         }
         public void GenerarLaberinto()
@@ -77,26 +77,9 @@ namespace Game.Laberintos
                 {
                     laberinto [vf, vc] = true;
                 }
-            }
-            //Fila0(laberinto, filas, columnas);                
+            }               
         }
-        // private static void Fila0(bool [,] laberinto, int filas, int columnas)
-        // {
-        //     int count = 0;
-        //     for (int i = 0; i < filas; i++)
-        //     {
-        //         for (int j = 0; j < columnas; j ++)
-        //         {
-        //             if (!laberinto [i, j]) count ++;
-        //         }
-        //         if (count == filas - 1)
-        //         {
-        //             laberinto [i, count] = true;
-        //         }
-        //         count = 0;
-        //     }
-        // }
-        private static void ColocarParedes(int filas, int columnas, bool[,] laberinto)
+        public static void ColocarParedes(int filas, int columnas, bool[,] laberinto)
         {
             bool [,] mask = new bool[filas, columnas];
             int[] df = [-1, 1, 0, 0, -1, 1, -1, 1];
@@ -128,20 +111,11 @@ namespace Game.Laberintos
                     }
                     if (count + countpos == 8)
                     {
-                        Casilla Obstaculo = new(f, c, Casilla.TipoDecasilla.obstaculo);
                         mask [f, c] = false;
                     }
                     count = 0;
                     countpos = 0;
                 }
-            }
-            for (int i = 0; i < filas; i++)
-            {
-                for (int j = 0; j < columnas; j++)
-                {
-                    System.Console.Write(mask[i,j] + "\t ");
-                }
-                System.Console.WriteLine();
             }
         }
     }
