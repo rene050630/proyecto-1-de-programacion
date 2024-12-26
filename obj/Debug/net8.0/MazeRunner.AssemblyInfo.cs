@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MazeRunner")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dc2a4d002b937d063ecb445e273a7a155c331d08")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1107e08f0777941222ca4ddc2368d91c33af6873")]
 [assembly: System.Reflection.AssemblyProductAttribute("MazeRunner")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MazeRunner")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

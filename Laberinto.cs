@@ -16,15 +16,13 @@ namespace Game.Laberintos
             Columnas = columnas;
             laberinto = new bool [filas, columnas];
             GenerarLaberinto ();
-            //System.Console.WriteLine("holas");
-            ColocarParedes(filas, columnas, laberinto);
         }
         public void GenerarLaberinto()
         {
             Random random = new Random();
-            for (int i = 0; i < Filas; i++)
+            for (int i = 1; i < Filas; i++)
             {
-                for (int j = 0; j < Columnas; j++)
+                for (int j = 1; j < Columnas - 1; j++)
                 {
                     laberinto [i,j] = random.Next(2) == 1;
                 }
@@ -54,7 +52,18 @@ namespace Game.Laberintos
             {
                 for (int j = 0; j < columnas; j++)
                 {
-                    System.Console.Write(laberinto[i,j] + "\t ");
+                    if (laberinto[i,j])
+                    {
+                        Console.BackgroundColor = ConsoleColor.White; 
+                        Console.ForegroundColor = ConsoleColor.Black; 
+                        Console.Write(" ");
+                    }
+                    else
+                    {
+                        Console.BackgroundColor = ConsoleColor.Black; 
+                        Console.ForegroundColor = ConsoleColor.White; 
+                        Console.Write(" ");
+                    }
                 }
                 System.Console.WriteLine();
             }
@@ -78,45 +87,6 @@ namespace Game.Laberintos
                     laberinto [vf, vc] = true;
                 }
             }               
-        }
-        public static void ColocarParedes(int filas, int columnas, bool[,] laberinto)
-        {
-            bool [,] mask = new bool[filas, columnas];
-            int[] df = [-1, 1, 0, 0, -1, 1, -1, 1];
-            int[] dc = [0, 0, 1, -1, -1, -1, 1, 1];
-            for (int i = 0; i < filas; i ++)
-            {
-                for (int j = 0; j < columnas; j ++)
-                {
-                    mask[i,j] = laberinto[i,j]; 
-                }
-            }
-            int count = 0;
-            int countpos = 0;
-            for (int f = 0; f < filas; f ++)
-            {
-                for (int c = 0; c < columnas; c ++)
-                {
-                    if (!mask[f, c]) continue;
-                    for (int k = 0; k < df.Length; k ++)
-                    {
-                        int vf = f + df[k];
-                        int vc = c + dc[k];
-                        if (!PosVal(vf, vc, filas, columnas)) 
-                        {
-                            countpos ++;
-                            continue;
-                        }
-                        if (mask[vf, vc]) count ++;
-                    }
-                    if (count + countpos == 8)
-                    {
-                        mask [f, c] = false;
-                    }
-                    count = 0;
-                    countpos = 0;
-                }
-            }
         }
     }
 }

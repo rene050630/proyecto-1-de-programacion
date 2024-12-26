@@ -7,13 +7,15 @@ namespace Game.Fichas
         string poder{get;set;}
         int TiempoDeEnfriamiento {get;set;}
         int TurnosDeRecarga{get;set;}
-        public Ficha (string nombre, int velocidad, string poder, int TiempoDeEnfriamiento)
+        public int numero;
+        public Ficha (string nombre, int velocidad, string poder, int TiempoDeEnfriamiento, int numero)
         {
             this.nombre = nombre;
             this.velocidad = velocidad;
             this.poder = poder;
             this.TiempoDeEnfriamiento = TiempoDeEnfriamiento;
             TurnosDeRecarga = 0;
+            this.numero = numero;
         }
         public bool EstaEnPos(int x, int y)
         {
