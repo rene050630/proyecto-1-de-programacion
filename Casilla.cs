@@ -6,9 +6,9 @@ using System.Reflection;
 using System.Net.Quic;
 namespace Game.Casillas
 {
+    public enum TipoDeTrampa {Begin, Delay, NopuedeUsarPoder, obstaculos}
     public class Trampa
     {
-        public enum TipoDeTrampa {Begin, Delay, NopuedeUsarPoder, obstaculos}
         public TipoDeTrampa tipoDeTrampa { get; set; }
         private Laberinto laberintos;
         private bool[,] mask;
@@ -17,6 +17,24 @@ namespace Game.Casillas
             tipoDeTrampa = tipodeTrampa;
             this.laberintos = laberintos;
             mask = new bool[laberintos.Filas, laberintos.Columnas];
+        }
+        public void SetTrap()
+        {
+            switch(tipoDeTrampa)
+            {
+                case TipoDeTrampa.obstaculos:
+                obstaculos();
+                break;
+                case TipoDeTrampa.Begin :
+                Begin();
+                break;
+                case TipoDeTrampa.Delay :
+                Delay();
+                break;
+                case TipoDeTrampa.NopuedeUsarPoder :
+                NopuedeUsarPoder();
+                break;
+            }
         }
         public bool[,] obstaculos()
         {
@@ -60,6 +78,9 @@ namespace Game.Casillas
             maskwalls[laberintos.Filas - 1, laberintos.Columnas - 1] = true;
             return maskwalls;
         }
+        //Despues de poner todas las trampas devolver la mascara booleana
+        //Como especificar la ficha que caiga en una trampa
+        //como hacer numeros finitos de trampas 
         private static bool PosVal(int vf, int vc, int filas, int columnas)
         {
             return vf < filas && vf >= 0 && vc < columnas && vc >= 0;
