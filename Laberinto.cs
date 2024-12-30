@@ -48,25 +48,21 @@ namespace Game.Laberintos
                 }
             }
             laberinto [filas - 1, columnas - 1] = true;
-            for (int i = 0; i < filas; i++)
-            {
-                for (int j = 0; j < columnas; j++)
-                {
-                    if (laberinto[i,j])
-                    {
-                        Console.BackgroundColor = ConsoleColor.White; 
-                        Console.ForegroundColor = ConsoleColor.Black; 
-                        Console.Write(" ");
-                    }
-                    else
-                    {
-                        Console.BackgroundColor = ConsoleColor.Black; 
-                        Console.ForegroundColor = ConsoleColor.White; 
-                        Console.Write(" ");
-                    }
-                }
-                System.Console.WriteLine();
-            }
+            // for (int i = 0; i < filas; i++)
+            // {
+            //     for (int j = 0; j < columnas; j++)
+            //     {
+            //         if (!laberinto[i,j])
+            //         {
+            //             System.Console.Write(" ■ ");
+            //         }
+            //         else
+            //         {
+            //             System.Console.Write(" □ ");
+            //         }
+            //     }
+            //     System.Console.WriteLine();
+            // }
         }
         private static bool PosVal(int vf, int vc, int filas, int columnas)
         {

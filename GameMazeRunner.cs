@@ -9,15 +9,15 @@ namespace Game.GameMazeRunners
         private List <Ficha> FichasPlayer1;
         private List <Ficha> FichasPlayer2;
         private Laberinto laberinto;
-        //private Trampa trampa;
+        private Trampa trampa;
         public GameMazeRunner()
         {
             FichasPlayer1 = new List<Ficha> ();
             FichasPlayer2 = new List<Ficha> ();
-            InicializarFichas();
-            MostrarFichas();
+            //InicializarFichas();
+            //MostrarFichas();
             laberinto = new Laberinto (10, 10);
-            //trampa = new Trampa(Trampa.TipoDeTrampa.Begin, laberinto, FichasPlayer1);
+            trampa = new Trampa(laberinto);
             //Logica para indicar un movimiento valido
         }
         public void StartGame()
@@ -92,7 +92,16 @@ namespace Game.GameMazeRunners
         
         public void EndGame()
         {
-            //if (FichasPlayer1[0] == laberinto.laberinto[5,5])
+            bool ficha1 = FichasPlayer1.Any(item => item.numero == 1); //no necesariamente tiene que ser uno ni 6
+            bool ficha2 = FichasPlayer2.Any(item => item.numero == 6);
+            if (ficha1 == laberinto.laberinto[9,9])
+            {
+                System.Console.WriteLine("Jugador 1 ha ganado");
+            }
+            else if(ficha2 == laberinto.laberinto[9,9])
+            {
+                System.Console.WriteLine("Jugador 2 ha ganado");
+            }
         }
     }
 }

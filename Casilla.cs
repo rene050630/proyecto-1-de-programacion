@@ -4,6 +4,7 @@ using Game.GameMazeRunners;
 using System.ComponentModel;
 using System.Reflection;
 using System.Net.Quic;
+using System.Security.Cryptography.X509Certificates;
 namespace Game.Casillas
 {
     public enum TipoDeTrampa {Begin, Delay, NopuedeUsarPoder, obstaculos}
@@ -12,28 +13,85 @@ namespace Game.Casillas
         public TipoDeTrampa tipoDeTrampa { get; set; }
         private Laberinto laberintos;
         private bool[,] mask;
-        public Trampa(TipoDeTrampa tipodeTrampa, Laberinto laberintos)
+        public Trampa(Laberinto laberintos)
         {
-            tipoDeTrampa = tipodeTrampa;
             this.laberintos = laberintos;
             mask = new bool[laberintos.Filas, laberintos.Columnas];
+            SetTrap();
         }
-        public void SetTrap()
+        public bool[,] SetTrap()
         {
-            switch(tipoDeTrampa)
+            NopuedeUsarPoder();
+            mask [0,0] = true;
+            mask [laberintos.Filas - 1, laberintos.Columnas - 1] = true;
+            // for (int i = 0; i < mask.GetLength(0); i++)
+            // {
+            //     for (int j = 0; j < mask.GetLength(1); j++)
+            //     {
+            //         if (!mask[i,j])
+            //         {
+            //             System.Console.Write(" ■ ");
+            //         }
+            //         else
+            //         {
+            //             System.Console.Write(" □ ");
+            //         }
+            //     }
+            //     System.Console.WriteLine();
+            // }
+            return mask;
+        }
+        public void CaerEnTrampa(Ficha fichaPlayer1, Ficha fichaPlayer2, int x, int y)
+        {
+            if (fichaPlayer1.posicion == (x,y))
             {
-                case TipoDeTrampa.obstaculos:
-                obstaculos();
-                break;
-                case TipoDeTrampa.Begin :
-                Begin();
-                break;
-                case TipoDeTrampa.Delay :
-                Delay();
-                break;
-                case TipoDeTrampa.NopuedeUsarPoder :
-                NopuedeUsarPoder();
-                break;
+                switch(tipoDeTrampa)
+                {
+                    case TipoDeTrampa.obstaculos:
+                    obstaculos();
+                    break;
+                    case TipoDeTrampa.Begin :
+                    fichaPlayer1.ColocarFicha(0, 0);
+                    break;
+                    case TipoDeTrampa.Delay :
+                    if (fichaPlayer1.MovimientoValido(x - 3, y - 2))
+                    {
+                        fichaPlayer1.ColocarFicha(x - 3, y - 2);
+                    }
+                    else ValPos(x - 3, y - 2, mask, fichaPlayer1);
+                    break;
+                    case TipoDeTrampa.NopuedeUsarPoder :
+                    if (fichaPlayer1.EstaEnPos(x ,y))
+                    {
+                        fichaPlayer1.NopuedeUsarPoder();
+                    }
+                    break;
+                }
+            }
+            if (fichaPlayer2.posicion == (x,y))
+            {
+                switch(tipoDeTrampa)
+                {
+                    case TipoDeTrampa.obstaculos:
+                    obstaculos();
+                    break;
+                    case TipoDeTrampa.Begin :
+                    fichaPlayer2.ColocarFicha(0, 0);
+                    break;
+                    case TipoDeTrampa.Delay :
+                    if (fichaPlayer2.MovimientoValido(x - 3, y - 2))
+                    {
+                        fichaPlayer2.ColocarFicha(x - 3, y - 2);
+                    }
+                    else ValPos(x - 3, y - 2, mask, fichaPlayer2);
+                    break;
+                    case TipoDeTrampa.NopuedeUsarPoder :
+                    if (fichaPlayer2.EstaEnPos(x ,y))
+                    {
+                        fichaPlayer2.NopuedeUsarPoder();
+                    }
+                    break;
+                }
             }
         }
         public bool[,] obstaculos()
@@ -68,7 +126,7 @@ namespace Game.Casillas
                     }
                     if (count + countpos == 8)
                     {
-                        mask [f, c] = false;
+                        maskwalls [f, c] = false;
                     }
                     count = 0;
                     countpos = 0;
@@ -76,70 +134,66 @@ namespace Game.Casillas
             }
             maskwalls[0,0] = true;
             maskwalls[laberintos.Filas - 1, laberintos.Columnas - 1] = true;
+            for (int i = 0; i < maskwalls.GetLength(0); i++)
+            {
+                for (int j = 0; j < maskwalls.GetLength(1); j++)
+                {
+                    if (!maskwalls[i,j])
+                    {
+                        System.Console.Write(" ■ ");
+                    }
+                    else
+                    {
+                        System.Console.Write(" □ ");
+                    }
+                }
+                System.Console.WriteLine();
+            }
             return maskwalls;
         }
         //Despues de poner todas las trampas devolver la mascara booleana
-        //Como especificar la ficha que caiga en una trampa
-        //como hacer numeros finitos de trampas 
+        //Como especificar la ficha que caiga en una trampa 
         private static bool PosVal(int vf, int vc, int filas, int columnas)
         {
             return vf < filas && vf >= 0 && vc < columnas && vc >= 0;
         }
-        public void Begin()
+        public bool[,] Begin()
         {
-            bool [,] maskWalls = obstaculos();
-            for (int i = 0; i < laberintos.Filas; i ++)
-            {
-                for (int j = 1; j < laberintos.Columnas; j ++)
-                {
-                    mask[i,j] = maskWalls[i,j];
-                }
-            }
+            mask = obstaculos();
             int count = 0;
-            Ficha ficha = new("Sprint", 2, "Avanzar 4 casillas", 3, 1);
-            for (int i = mask.GetLength(0) - 1; i >= 0; i --)
+            for (int i = mask.GetLength(0) - 1; i > 0; i --)
             {
-                for (int j = mask.GetLength(1) - 2; j > 0; j --)
+                for (int j = mask.GetLength(1) - 1; j > 0; j --)
                 {
                     if (mask [i,j])
                     {
-                        mask [i, j] = false;
-                        if (ficha.EstaEnPos(i ,j)) 
-                        {
-                            if (Pos(mask, i, j)) continue;
-                            ficha.ColocarFicha(0,0);
-                        }
+                        mask [i, j] = false; 
+                        if (Pos(mask, i, j)) continue;
                         count ++;
                     }
+                    //if (count == 2) return mask;
                 }
-                if (count == 2) return;
             }
+            return mask;
         }
-        public void Delay()
+        public bool[,] Delay()
         {
-            Ficha ficha = new("Sprint", 2, "Avanzar 4 casillas", 3, 1);
+            mask = Begin();
             int count = 0;
-            for (int i = mask.GetLength(0) - 1; i >= 0; i --)
+            for (int i = mask.GetLength(0) - 1; i > 0; i --)
             {
                 for (int j = mask.GetLength(1) - 1; j > 0; j --)
                 {
                     if (mask [i,j])
                     {
                         mask [i, j] = false;
-                        if (ficha.EstaEnPos(i ,j))
-                        {
-                            if (Pos(mask, i, j)) continue;
-                            if (ficha.MovimientoValido(i - 3, j - 2))
-                            {
-                                ficha.ColocarFicha(i - 3, j - 2);
-                            }
-                            else ValPos(i - 3, j - 2, mask, ficha);
-                        }
-                        count ++;
+                        if (Pos(mask, i, j)) continue;
                     }
+                    count ++;
+                    //if (count == 2) return mask;
                 }
-                if (count == 2) return;
             }
+            return mask;
         }
         private void ValPos (int i, int j, bool [,] mask, Ficha ficha)
         {
@@ -148,27 +202,24 @@ namespace Game.Casillas
                 if (mask [k + 1, k]) ficha.ColocarFicha(k + 1, k);
             }
         }
-        public void NopuedeUsarPoder()
+        public bool [,] NopuedeUsarPoder()
         {
+            mask = Delay();
             int count = 0;
-            Ficha ficha = new Ficha("Sprint", 2, "Avanzar 4 casillas", 3, 1);
-            for (int i = mask.GetLength(0) - 1; i > 0; i --)
+            for (int i = 1; i < mask.GetLength(0) - 1; i ++)
             {
-                for (int j = mask.GetLength(1) - 1; j > 0; j --)
+                for (int j = 1; j < mask.GetLength(1) - 1; j ++)
                 {
                     if (mask [i,j])
                     {
                         mask [i, j] = false;
-                        if (ficha.EstaEnPos(i ,j))
-                        {
-                            if (Pos(mask, i, j)) continue;
-                            ficha.NopuedeUsarPoder();
-                        }
+                        if (Pos(mask, i, j)) continue;
                         count ++;
                     }
+                    //if (count == 2) return mask;
                 }
-                if (count == 2) return;
             }
+            return mask;
         }
         private static bool Pos(bool [,] mask, int a, int b)
         {

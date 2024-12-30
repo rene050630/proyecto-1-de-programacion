@@ -12,8 +12,11 @@ namespace Game.Fichas
         int TiempoDeEnfriamiento {get;set;}
         int TurnosDeRecarga{get;set;}
         public int numero;
+        public (int, int) posicion;
         Trampa trampa;
         Laberinto laberintos;
+        List <Ficha> FichasPlayer1;
+        List <Ficha> FichasPlayer2;
         public Ficha (string nombre, int velocidad, Poder poderFicha, int TiempoDeEnfriamiento, int numero, Laberinto laberintos)
         {
             this.nombre = nombre;
@@ -22,8 +25,7 @@ namespace Game.Fichas
             this.TiempoDeEnfriamiento = TiempoDeEnfriamiento;
             TurnosDeRecarga = 0;
             this.numero = numero;
-            trampa = new Trampa(TipoDeTrampa.obstaculos, laberintos);
-            
+            //trampa = new Trampa(laberintos);
         }
         public void Sprint(int x, int y)
         {
@@ -158,7 +160,7 @@ namespace Game.Fichas
         }
         private void CaminoFast(int [,] distancia, int x, int y)
         {
-            bool[,] mask = trampa.obstaculos();
+            bool[,] mask = trampa.obstaculos(); //Revisar si pasa para mask toda la mascara de obstaculos
             int [] df = [0, 1, 0, -1];
             int [] dc = [1, 0, -1, 0];
             int [,] distancias = new int [mask.GetLength(0), mask.GetLength(1)];
@@ -185,7 +187,7 @@ namespace Game.Fichas
                                     ColocarFicha(vf, vc);
                                 }
                                 hubocambio = true;
-                                break;
+                                break; //donde se ubica este break
                             }
                         }
                     }
@@ -199,7 +201,7 @@ namespace Game.Fichas
         }
         public void ColocarFicha(int x, int y)
         {
-            //duda
+            System.Console.WriteLine("o");
         }
         public bool PuedeUsarPoder()
         {
@@ -255,9 +257,9 @@ namespace Game.Fichas
             //Logica para indicar un movimiento valido
             return true;
         }
-        public Stack<(int, int)> MovimientoDeFichas(int x, int y)
+        public Stack<(int, int)> MovimientoDeFichas(int x, int y, bool fichaplayer1, bool fichaplayer2)
         {
-            if (fichaplayer1) //como definir una sola ficha para los players
+            if (fichaplayer1) //como definir una sola ficha para los players //que pasarle como parametro al if
             {
                 Stack<(int, int)> movimientosficha1 = new Stack<(int, int)>();
                 if (laberintos.laberinto[x, y]) //Duda en si poner laberinto o casilla y que pasarle como paremetro 
@@ -279,6 +281,7 @@ namespace Game.Fichas
                 }
                 return movimientosficha2;
             }
+            return null;
             //if (MovimientoValido(x, y))
         }
         
