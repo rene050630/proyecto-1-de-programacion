@@ -1,21 +1,20 @@
-using System.Reflection.Emit;
-using System.Runtime.ConstrainedExecution;
-using System.Runtime.InteropServices;
-using Game.Casillas;
 
-namespace Game.Laberintos
-{
     public class Laberinto 
     {
         public bool [,] laberinto;
         public int Filas;
         public int Columnas;
-        public Laberinto (int filas, int columnas)
+        public Jugador jugador1;
+        public Jugador jugador2;
+        public Laberinto (int filas, int columnas, Jugador jugador1, Jugador jugador2)
         {
             Filas = filas;
             Columnas = columnas;
             laberinto = new bool [filas, columnas];
+            this.jugador1 = jugador1;
+            this.jugador2 = jugador2;
             GenerarLaberinto ();
+            ImprimirLab();
         }
         public void GenerarLaberinto()
         {
@@ -27,9 +26,9 @@ namespace Game.Laberintos
                     laberinto [i,j] = random.Next(2) == 1;
                 }
             }
-            EsValido(Filas, Columnas, laberinto);
+            EsValido(Filas, Columnas, laberinto, jugador1, jugador2);
         }
-        private static void EsValido(int filas, int columnas, bool[,] laberinto)
+        private static void EsValido(int filas, int columnas, bool[,] laberinto, Jugador jugador1, Jugador jugador2)
         {
             int[] df = [0, 1, 0, -1];
             int[] dc = [1, 0, -1, 0];
@@ -48,21 +47,47 @@ namespace Game.Laberintos
                 }
             }
             laberinto [filas - 1, columnas - 1] = true;
-            // for (int i = 0; i < filas; i++)
-            // {
-            //     for (int j = 0; j < columnas; j++)
-            //     {
-            //         if (!laberinto[i,j])
-            //         {
-            //             System.Console.Write(" ■ ");
-            //         }
-            //         else
-            //         {
-            //             System.Console.Write(" □ ");
-            //         }
-            //     }
-            //     System.Console.WriteLine();
-            // }
+        }
+        public void ImprimirLab()
+        {
+            int count = 0;
+            while(count < 1)
+            {
+                //Console.Clear();
+                for (int i = 0; i < Filas; i++)
+                {
+                    for (int j = 0; j < Columnas; j++)
+                    {
+                        if (jugador1.ficha.posicion == (i,j) && jugador2.ficha.posicion == (i,j))
+                        {
+                            System.Console.Write("a b");
+                            count ++;
+                        }
+                        else if (jugador1.ficha.posicion == (i,j))
+                        {
+                            System.Console.Write(" a ");
+                            count ++;
+                        }
+                        else if (jugador2.ficha.posicion == (i,j))
+                        {
+                            System.Console.Write(" b ");
+                            count ++;
+                        }
+                        else if (!laberinto[i,j])
+                        {
+                            System.Console.Write(" ■ ");
+                            count ++;
+                        }
+                        else
+                        {
+                            System.Console.Write(" □ ");
+                            count ++;
+                        }
+                        
+                    }
+                    System.Console.WriteLine();
+                }
+            }
         }
         private static bool PosVal(int vf, int vc, int filas, int columnas)
         {
@@ -85,5 +110,3 @@ namespace Game.Laberintos
             }               
         }
     }
-}
-

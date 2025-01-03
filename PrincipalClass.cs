@@ -1,13 +1,8 @@
-using Game.GameMazeRunners;
-using Game.InterfazGrafica;
-namespace Game.ClasePrincipal
+public class PrincipalClass
 {
-    public class PrincipalClass
+    static void Main()
     {
-        static void Main ()
-        {
-            GameMazeRunner a = new GameMazeRunner();
-        }
+        GameMazeRunner a = new GameMazeRunner();
     }
 }
 
