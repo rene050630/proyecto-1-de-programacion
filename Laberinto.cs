@@ -26,23 +26,25 @@
                     laberinto [i,j] = random.Next(2) == 1;
                 }
             }
-            EsValido(Filas, Columnas, laberinto, jugador1, jugador2);
+            EsValido(Filas, Columnas, laberinto);
         }
-        private static void EsValido(int filas, int columnas, bool[,] laberinto, Jugador jugador1, Jugador jugador2)
+        private static void EsValido(int filas, int columnas, bool[,] laberinto)
         {
-            int[] df = [0, 1, 0, -1];
-            int[] dc = [1, 0, -1, 0];
+            // int[] df = [0, 1, 0, -1];
+            // int[] dc = [1, 0, -1, 0];
             laberinto [0,0] = true;
-            for (int k = 0; k < df.Length; k++)
+            //for (int k = 0; k < df.Length; k++)
             {
                 for (int f = 0; f < filas; f ++)
                 {
                     for (int c = 0; c < columnas; c ++)
                     {
-                        int vf = f + df[k]*f;
-                        int vc = c + dc[k]*f;
-                        if (!PosVal(vf, vc, filas, columnas)) continue;
-                        if (laberinto [vf, vc]) DoVal(laberinto, vf, vc, filas, columnas);
+                        // int vf = f + df[k]*f;
+                        // int vc = c + dc[k]*f;
+                        // if (!PosVal(vf, vc, filas, columnas)) continue;
+                        // if (laberinto [vf, vc]) DoVal(laberinto, vf, vc, filas, columnas);
+                        //if (!PosVal(i, vc, filas, columnas)) continue;
+                        if (laberinto [f, c]) DoVal(laberinto, f, c, filas, columnas);
                     }
                 }
             }
@@ -53,7 +55,7 @@
             int count = 0;
             while(count < 1)
             {
-                //Console.Clear();
+                Console.Clear();
                 for (int i = 0; i < Filas; i++)
                 {
                     for (int j = 0; j < Columnas; j++)
