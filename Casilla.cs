@@ -17,29 +17,14 @@ public class Trampa
         maskInt[laberintos.Filas - 1, laberintos.Columnas - 1] = 0;
         mask[0,0] = true;
         maskInt[0,0] = 0;
-        // for (int i = 0; i < maskInt.GetLength(0); i++)
-        // {
-        //     for (int j = 0; j < maskInt.GetLength(1); j++)
-        //     {
-        //         System.Console.Write(maskInt[i,j] + "\t");
-        //     }
-        //     System.Console.WriteLine();
-        // }
-        // for (int i = 0; i < mask.GetLength(0); i++)
-        //     {
-        //         for (int j = 0; j < mask.GetLength(1); j++)
-        //         {
-        //             if (!mask[i,j])
-        //             {
-        //                 System.Console.Write(" ■ ");
-        //             }
-        //             else
-        //             {
-        //                 System.Console.Write(" □ ");
-        //             }
-        //         }
-        //         System.Console.WriteLine();
-        //     }
+        for (int i = 0; i < maskInt.GetLength(0); i++)
+        {
+            for (int j = 0; j < maskInt.GetLength(1); j++)
+            {
+                System.Console.Write(maskInt[i,j] + "\t");
+            }
+            System.Console.WriteLine();
+        }
         return mask;
     }
     public bool[,] obstaculos()
@@ -82,21 +67,6 @@ public class Trampa
         }
         maskwalls[0,0] = true;
         maskwalls[laberintos.Filas - 1, laberintos.Columnas - 1] = true;
-            // for (int i = 0; i < maskwalls.GetLength(0); i++)
-            // {
-            //     for (int j = 0; j < maskwalls.GetLength(1); j++)
-            //     {
-            //         if (!maskwalls[i,j])
-            //         {
-            //             System.Console.Write(" ■ ");
-            //         }
-            //         else
-            //         {
-            //             System.Console.Write(" □ ");
-            //         }
-            //     }
-            //     System.Console.WriteLine();
-            // }
         return maskwalls;
     } 
         private static bool PosVal(int vf, int vc, int filas, int columnas)
@@ -127,7 +97,7 @@ public class Trampa
                         mask [i,j] = false; 
                         count ++;
                     }
-                    if (count == 2) return maskInt;
+                    if (count == 4) return maskInt;
                 }
             }
             return maskInt;
@@ -146,7 +116,7 @@ public class Trampa
                         maskInt[i,j] = 3;
                         count ++;
                     }
-                    if (count == 2) return maskInt;
+                    if (count == 4) return maskInt;
                 }
             }
             return maskInt;
@@ -166,7 +136,7 @@ public class Trampa
                         maskInt[i,j] = 4;
                         count ++;
                     }
-                    if (count == 2) return maskInt;
+                    if (count == 4) return maskInt;
                 }
             }
             return maskInt;

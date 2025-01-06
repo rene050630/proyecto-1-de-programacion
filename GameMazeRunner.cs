@@ -54,18 +54,20 @@
                 {
                     if (i == 0) jugadoractual = jugador1;
                     else jugadoractual = jugador2;
-                    System.Console.WriteLine(jugadoractual.ficha.SafePos.Item1 + " " + jugadoractual.ficha.SafePos.Item2);
-                    System.Console.WriteLine(jugadoractual.ficha.posicion.Item1 + " " + jugadoractual.ficha.posicion.Item2);
-
                     int cooldown = jugadoractual.ficha.TiempoDeEnfriamiento - jugadoractual.ficha.TurnosDeRecarga;
                     if(cooldown <= 0)  cooldown = 0; 
                     System.Console.WriteLine($"nombre : {jugadoractual.ficha.nombre}, poder : {jugadoractual.ficha.Poderficha}, su velocidad es: {jugadoractual.ficha.velocidad}, tiempo de enfriamineto : {cooldown}");
                     if (EndGame()) break;
-                   
                     MovimientoDeFichas(jugadoractual.ficha, jugadoractual);
-                    if (jugador2.ficha.numero == 8 && !trampa.obstaculos()[jugador2.ficha.posicion.Item1, jugador2.ficha.posicion.Item2])
+                    if (jugador2.ficha.numero == 8 && !trampa.mask[jugador2.ficha.posicion.Item1, jugador2.ficha.posicion.Item2])
                     {
                         laberinto.laberinto[jugador2.ficha.posicion.Item1, jugador2.ficha.posicion.Item2] = true;
+                        trampa.maskInt[jugador2.ficha.posicion.Item1, jugador2.ficha.posicion.Item2] = 0;
+                        trampa.mask[jugador2.ficha.posicion.Item1, jugador2.ficha.posicion.Item2] = true;
+                    }
+                    if (jugadoractual.ficha.numero == 4 || jugadoractual.ficha.numero == 7 && trampa.maskInt[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] > 1)
+                    {
+                        trampa.maskInt[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] = 0;
                     }
                     CaerEnTrampa(jugadoractual);
                     IncrementarTurno(jugadoractual);
@@ -93,10 +95,10 @@
                     {
                         System.Console.WriteLine("Selecciona la ficha que desee escrbiendo su número correspondiente");
                         System.Console.WriteLine("1 - Nombre : Sprint, Velocidad : 1, Poder : Avanzar 4 casillas, Tiempo de enfriamiento : 3");
-                        System.Console.WriteLine("2 - Nombre : Fortaleza, Velocidad : 1, Poder : Avanzar por encima de obstaculos, Tiempo de enfriamiento : 4");
+                        System.Console.WriteLine("2 - Nombre : Fortaleza, Velocidad : 1, Poder : Avanzar por encima de obstáculos, Tiempo de enfriamiento : 4");
                         System.Console.WriteLine("3 - Nombre : Reloj de arena, Velocidad : 1, Poder : Extender el tiempo de enfriamiento de otra ficha, Tiempo de enfriamiento : 3");
                         System.Console.WriteLine("4 - Nombre : Invisibilidad, Velocidad : 1, Poder : Desactiva trampas, Tiempo de enfriamiento : 2");
-                        System.Console.WriteLine("5 - Nombre : Saltadora, Velocidad : 1, Poder : Puede saltar obstaculos, Tiempo de enfriamiento : 3");
+                        System.Console.WriteLine("5 - Nombre : Saltadora, Velocidad : 1, Poder : Puede avanzar por encima de obstáculos, Tiempo de enfriamiento : 3");
                         SeleccionarFichas (1);
                     }
                     else 
@@ -104,7 +106,7 @@
                         System.Console.WriteLine("Selecciona la ficha que desee escrbiendo su número correspondiente");
                         System.Console.WriteLine("6 - Nombre : Retroceso, Velocidad : 1, Poder : Puede anular su movimiento, Tiempo de enfriamiento : 2");
                         System.Console.WriteLine("7 - Nombre : Trampero, Velocidad : 1, Poder : Desactiva trampas, Tiempo de enfriamiento : 2");
-                        System.Console.WriteLine("8 - Nombre : Fuego, Velocidad : 1, Poder : Puede destruir obstaculos, Tiempo de enfriamiento : 3");
+                        System.Console.WriteLine("8 - Nombre : Fuego, Velocidad : 1, Poder : Puede destruir obstaculos y trampas, Tiempo de enfriamiento : 3");
                         System.Console.WriteLine("9 - Nombre : Retraso, Velocidad : 1, Poder : Hacer retroceder a otro jugador un movimiento, Tiempo de enfriamiento : 2");
                         System.Console.WriteLine("10 - Nombre : Intercambio, Velocidad : 1, Poder : Permite intercambiar su posicion con la de otra ficha cualquiera, Tiempo de enfriamiento : 5");
                         SeleccionarFichas(2);
@@ -268,7 +270,8 @@
                 trampa.mask[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] = true;
                 trampa.maskInt[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] = 0;
                 jugadoractual.ficha.ColocarFicha(0,0);
-                System.Console.WriteLine("has caido en una trampa");
+                System.Console.WriteLine("has caído en una trampa");
+                laberinto.ImprimirLab();
                 Thread.Sleep(800);
                 return;
             }
@@ -279,7 +282,8 @@
                     trampa.mask[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] = true;
                     trampa.maskInt[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] = 0;
                     jugadoractual.ficha.ColocarFicha(jugadoractual.ficha.posicion.Item1 - 1, jugadoractual.ficha.posicion.Item2 - 1);
-                    System.Console.WriteLine("has caidoooooo en una trampa");
+                    System.Console.WriteLine("has caído en una trampa");
+                    laberinto.ImprimirLab();
                     Thread.Sleep(800);
                     return;
                 }
@@ -287,8 +291,9 @@
                 {
                     trampa.mask[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] = true;
                     trampa.maskInt[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] = 0;
-                    ValPos(jugadoractual.ficha.posicion.Item1 - 1, jugadoractual.ficha.posicion.Item2 - 1, trampa.SetTrap(), jugadoractual);
-                    System.Console.WriteLine("has caidosssssss en una trampa");
+                    ValPos(jugadoractual.ficha.posicion.Item1 - 1, jugadoractual.ficha.posicion.Item2 - 1, trampa.mask, jugadoractual);
+                    System.Console.WriteLine("has caído en una trampa");
+                    laberinto.ImprimirLab();
                     Thread.Sleep(800);
                     return;
                 }
@@ -298,14 +303,15 @@
                 trampa.mask[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] = true;
                 trampa.maskInt[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] = 0;
                 NopuedeUsarPoder(jugadoractual);
-                System.Console.WriteLine("has caido en una trampawwwww");
+                System.Console.WriteLine("has caído en una trampa");
+                laberinto.ImprimirLab();
                 Thread.Sleep(800);
                 return;
             }
         }
         public void NopuedeUsarPoder(Jugador jugadoractual)
         {
-            jugadoractual.ficha.TiempoDeEnfriamiento = 5;
+            jugadoractual.ficha.TurnosDeRecarga = 0;
         }
         private void ValPos (int h, int k, bool [,] mask, Jugador jugadoractual)
         {
@@ -336,29 +342,25 @@
                     if (tecla.Key == ConsoleKey.UpArrow && MovimientoValido(ficha.posicion.Item1 - 1, ficha.posicion.Item2, jugadoractual))
                     {
                         ficha.posicion.Item1--;
-                        jugadoractual.ficha.movimientos.Push(new (jugadoractual.ficha.posicion.Item1 - 1, jugadoractual.ficha.posicion.Item2));
                     }
                     else if (tecla.Key == ConsoleKey.DownArrow && MovimientoValido(ficha.posicion.Item1 + 1, ficha.posicion.Item2, jugadoractual))
                     {
                         ficha.posicion.Item1 ++;
-                        jugadoractual.ficha.movimientos.Push(new (jugadoractual.ficha.posicion.Item1 + 1, jugadoractual.ficha.posicion.Item2));
                     }
                     else if (tecla.Key == ConsoleKey.LeftArrow && MovimientoValido(ficha.posicion.Item1, ficha.posicion.Item2 - 1, jugadoractual))
                     {
                         ficha.posicion.Item2 --;
-                        jugadoractual.ficha.movimientos.Push(new (jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2 - 1));
                     }
                     else if (tecla.Key == ConsoleKey.RightArrow && MovimientoValido(ficha.posicion.Item1 , ficha.posicion.Item2 + 1, jugadoractual))
                     {
-                        ficha.posicion.Item2 ++;
-                        jugadoractual.ficha.movimientos.Push(new (jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2 + 1));
+                        ficha.posicion.Item2 ++;                    
                     }
                     else 
                     {
                         System.Console.WriteLine("has chocado contra un obstáculo");
                     }
                 }
-                catch (IndexOutOfRangeException)
+                catch (Exception)
                 {
                     System.Console.WriteLine("Se ha ido fuera de los límites del tablero, pierde su turno");
                     Thread.Sleep(800);
