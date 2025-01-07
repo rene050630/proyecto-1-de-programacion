@@ -1,25 +1,28 @@
-public class Trampa
+public class Trap
 {
-    public Laberinto laberintos;
+    public Maze Maze;
     public bool[,] mask;
     public int[,] maskInt;
-    public Trampa(Laberinto laberintos)
+    public bool[,] maskObs;
+    public Trap(Maze Maze)
     {
-        this.laberintos = laberintos;
-        mask = new bool[laberintos.Filas, laberintos.Columnas];
+        this.Maze = Maze;
+        mask = new bool[Maze.Rows, Maze.Columns];
         maskInt = new int [mask.GetLength(0), mask.GetLength(1)];
+        maskObs = new bool [Maze.Rows, Maze.Columns];
         SetTrap();
     }
     public bool[,] SetTrap()
     {
-        NopuedeUsarPoder();
-        mask[laberintos.Filas - 1, laberintos.Columnas - 1] = true;
-        maskInt[laberintos.Filas - 1, laberintos.Columnas - 1] = 0;
+        Obstacle();
+        CannotUsePower();
+        mask[Maze.Rows - 1, Maze.Columns - 1] = true;
+        maskInt[Maze.Rows - 1, Maze.Columns - 1] = 0;
         mask[0,0] = true;
         maskInt[0,0] = 0;
         for (int i = 0; i < maskInt.GetLength(0); i++)
         {
-            for (int j = 0; j < maskInt.GetLength(1); j++)
+            for (int j = 0; j < maskObs.GetLength(1); j++)
             {
                 System.Console.Write(maskInt[i,j] + "\t");
             }
@@ -27,55 +30,59 @@ public class Trampa
         }
         return mask;
     }
-    public bool[,] obstaculos()
+    public void Obstacle()
     {
-        bool [,] maskwalls = new bool[laberintos.Filas, laberintos.Columnas];
         int[] df = [-1, 1, 0, 0, -1, 1, -1, 1];
         int[] dc = [0, 0, 1, -1, -1, -1, 1, 1];
-        for (int i = 0; i < laberintos.Filas; i ++)
+        for (int i = 0; i < Maze.Rows; i ++)
         {
-            for (int j = 0; j < laberintos.Columnas; j ++)
+            for (int j = 0; j < Maze.Columns; j ++)
             {
-                maskwalls[i,j] = laberintos.laberinto[i,j]; 
+                maskObs[i,j] = Maze.maze[i,j]; 
             }
         }
         int count = 0;
         int countpos = 0;
-        for (int f = 0; f < laberintos.Filas; f ++)
+        for (int f = 0; f < Maze.Rows; f ++)
         {
-            for (int c = 0; c < laberintos.Columnas; c ++)
+            for (int c = 0; c < Maze.Columns; c ++)
             {
-                if (!maskwalls[f, c]) continue;
+                if (!maskObs[f, c]) continue;
                 for (int k = 0; k < df.Length; k ++)
                 {
                     int vf = f + df[k];
                     int vc = c + dc[k];
-                    if (!PosVal(vf, vc, laberintos.Filas, laberintos.Columnas)) 
+                    if (!PosVal(vf, vc, Maze.Rows, Maze.Columns)) 
                     {
                         countpos ++;
                         continue;
                     }
-                    if (maskwalls[vf, vc]) count ++;
+                    if (maskObs[vf, vc]) count ++;
                 }
                 if (count + countpos == 8)
                 {
-                    maskwalls [f, c] = false;
+                    maskObs [f, c] = false;
                 }
                 count = 0;
                 countpos = 0;
             }
         }
-        maskwalls[0,0] = true;
-        maskwalls[laberintos.Filas - 1, laberintos.Columnas - 1] = true;
-        return maskwalls;
+        maskObs[0,0] = true;
+        maskObs[Maze.Rows - 1, Maze.Columns - 1] = true;
     } 
-        private static bool PosVal(int vf, int vc, int filas, int columnas)
+        private static bool PosVal(int vf, int vc, int rows, int columns)
         {
-            return vf < filas && vf >= 0 && vc < columnas && vc >= 0;
+            return vf < rows && vf >= 0 && vc < columns && vc >= 0;
         }
         public int[,] Begin()
         {
-            mask = obstaculos();
+            for (int i = 0; i < Maze.Rows; i ++)
+            {
+                for (int j = 0; j < Maze.Columns; j ++)
+                {
+                    mask[i,j] = maskObs[i,j]; 
+                }
+            }
             for(int i = 0; i < mask.GetLength(0); i++)
             {
                 for (int j = 0; j < mask.GetLength(1); j++)
@@ -122,7 +129,7 @@ public class Trampa
             return maskInt;
         }
         
-        public int[,] NopuedeUsarPoder()
+        public int[,] CannotUsePower()
         {
             maskInt = Delay();
             int count = 0;

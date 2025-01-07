@@ -1,133 +1,135 @@
 ﻿public class GameMazeRunner
     {
-        public List <Ficha> FichasPlayer1;
-        public List <Ficha> FichasPlayer2;
-        public Jugador jugador1;
-        public Jugador jugador2;
-        public Laberinto laberinto;
-        public Trampa trampa;
+        public List <Token> TokenPlayer1;
+        public List <Token> TokenPlayer2;
+        public Player Player1;
+        public Player Player2;
+        public Maze Maze;
+        public Trap trap;
         public GameMazeRunner()
         {
-            FichasPlayer1 = new List <Ficha>();
-            FichasPlayer2 = new List <Ficha>();
+            TokenPlayer1 = new List <Token>();
+            TokenPlayer2 = new List <Token>();
             StartGame();
-            jugador1 = new Jugador("");
-            jugador2 = new Jugador ("");
-            laberinto = new(10, 10, jugador1, jugador2);
-            trampa = new Trampa(laberinto);
+            Player1 = new Player("");
+            Player2 = new Player ("");
+            Maze = new(10, 10, Player1, Player2);
+            trap = new Trap(Maze);
         }
         public void StartGame()
         {
-            InicializarFichas();
+            InitializeToken();
             for (int i = 0; i < 2; i++)
             {
                 System.Console.WriteLine("Ingrese su nombre");
                 Label1:
-                string nombreplayer = Console.ReadLine()??string.Empty;
-                if (string.IsNullOrWhiteSpace(nombreplayer))
+                string nameplayer = Console.ReadLine()??string.Empty;
+                if (string.IsNullOrWhiteSpace(nameplayer))
                 {
                     System.Console.WriteLine("No puede dejar su nombre en blanco. Escríbalo correctamente");
                     goto Label1;
                 }
                 if (i == 0)
                     {
-                        jugador1 = new Jugador(nombreplayer);
-                        MostrarFichas(jugador1);
+                        Player1 = new Player(nameplayer);
+                        ShowToken(Player1);
                     }
                     else 
                     {
-                        jugador2 = new Jugador(nombreplayer);
-                        MostrarFichas(jugador2);
+                        Player2 = new Player(nameplayer);
+                        ShowToken(Player2);
                     }
             }
-            laberinto = new Laberinto(10, 10, jugador1, jugador2);
-            trampa = new Trampa(laberinto);
+            Maze = new Maze(10, 10, Player1, Player2);
+            trap = new Trap(Maze);
             Play();
         }
 
         public void Play()
         {
-            Jugador jugadoractual;
+            Player currentPlayer;
             while (true)
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    if (i == 0) jugadoractual = jugador1;
-                    else jugadoractual = jugador2;
-                    int cooldown = jugadoractual.ficha.TiempoDeEnfriamiento - jugadoractual.ficha.TurnosDeRecarga;
+                    if (i == 0) currentPlayer = Player1;
+                    else currentPlayer = Player2;
+                    int cooldown = currentPlayer.token.Cooldown - currentPlayer.token.Recharge;
                     if(cooldown <= 0)  cooldown = 0; 
-                    System.Console.WriteLine($"nombre : {jugadoractual.ficha.nombre}, poder : {jugadoractual.ficha.Poderficha}, su velocidad es: {jugadoractual.ficha.velocidad}, tiempo de enfriamineto : {cooldown}");
-                    if (EndGame()) break;
-                    MovimientoDeFichas(jugadoractual.ficha, jugadoractual);
-                    if (jugador2.ficha.numero == 8 && !trampa.mask[jugador2.ficha.posicion.Item1, jugador2.ficha.posicion.Item2])
+                    System.Console.WriteLine($"nombre : {currentPlayer.token.name}, poder : {currentPlayer.token.TokenPower}, velocidad: {currentPlayer.token.Speed}, tiempo de enfriamineto: {cooldown}");
+                    TokenMovement(currentPlayer.token, currentPlayer);
+                    if (Player2.token.Number == 8 && !trap.mask[Player2.token.position.Item1, Player2.token.position.Item2])
                     {
-                        laberinto.laberinto[jugador2.ficha.posicion.Item1, jugador2.ficha.posicion.Item2] = true;
-                        trampa.maskInt[jugador2.ficha.posicion.Item1, jugador2.ficha.posicion.Item2] = 0;
-                        trampa.mask[jugador2.ficha.posicion.Item1, jugador2.ficha.posicion.Item2] = true;
+                        Maze.maze[Player2.token.position.Item1, Player2.token.position.Item2] = true;
+                        trap.maskInt[Player2.token.position.Item1, Player2.token.position.Item2] = 0;
+                        trap.mask[Player2.token.position.Item1, Player2.token.position.Item2] = true;
+                        trap.maskObs[Player2.token.position.Item1, Player2.token.position.Item2] = true;
                     }
-                    if (jugadoractual.ficha.numero == 4 || jugadoractual.ficha.numero == 7 && trampa.maskInt[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] > 1)
+                    if (currentPlayer.token.Number == 4 || currentPlayer.token.Number == 7 && trap.maskInt[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] > 1)
                     {
-                        trampa.maskInt[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] = 0;
+                        trap.maskInt[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] = 0;
+                        trap.mask[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] = true;
+                        trap.maskObs[Player2.token.position.Item1, Player2.token.position.Item2] = true;
                     }
-                    CaerEnTrampa(jugadoractual);
-                    IncrementarTurno(jugadoractual);
-                    jugadoractual.ficha.IsActive = false;
+                    RunIntoTraps(currentPlayer);
+                    IncreaseShift(currentPlayer);
+                    currentPlayer.token.IsActive = false;
+                    if (EndGame()) return;
                 }
-                if (EndGame()) break;
             }  
         }
-                public void InicializarFichas()
+                public void InitializeToken()
                 {
-                    FichasPlayer1.Add(new Ficha("Sprint", 1, 3, Poderes.sprint, 1));
-                    FichasPlayer1.Add(new Ficha("Fortaleza", 1, 4, Poderes.fortaleza, 2));
-                    FichasPlayer1.Add(new Ficha("Reloj de arena", 1, 3, Poderes.reloj, 3));
-                    FichasPlayer1.Add(new Ficha("Invisibilidad", 1, 2, Poderes.invisibilidad,4));
-                    FichasPlayer1.Add(new Ficha("Saltadora", 1, 3, Poderes.saltar, 5));
-                    FichasPlayer2.Add(new Ficha("Retroceso", 1, 2, Poderes.retroceso, 6));
-                    FichasPlayer2.Add(new Ficha("Trampero", 1, 5, Poderes.trampero, 7));
-                    FichasPlayer2.Add(new Ficha("Fuego", 1, 6, Poderes.destroyer, 8));
-                    FichasPlayer2.Add(new Ficha("Retraso", 1, 2, Poderes.retraso, 9));
-                    FichasPlayer2.Add(new Ficha("Intercambio", 1, 5, Poderes.intercambio, 10));
+                    TokenPlayer1.Add(new Token("Sprint", 1, 3, Powers.sprint, 1));
+                    TokenPlayer1.Add(new Token("Fortress", 1, 4, Powers.fortress, 2));
+                    TokenPlayer1.Add(new Token("Clock de arena", 1, 3, Powers.clock, 3));
+                    TokenPlayer1.Add(new Token("Ghost", 1, 2, Powers.ghost,4));
+                    TokenPlayer1.Add(new Token("Jumper", 1, 3, Powers.jump, 5));
+                    TokenPlayer2.Add(new Token("Recoil", 1, 2, Powers.recoil, 6));
+                    TokenPlayer2.Add(new Token("Trapper", 1, 5, Powers.trapper, 7));
+                    TokenPlayer2.Add(new Token("Fire", 1, 6, Powers.destroyer, 8));
+                    TokenPlayer2.Add(new Token("Backwards", 1, 2, Powers.backwards, 9));
+                    TokenPlayer2.Add(new Token("Exchange", 1, 5, Powers.exchange, 10));
                 }
-                public void MostrarFichas(Jugador jugador)
+                public void ShowToken(Player player)
                 {
-                    if (jugador == jugador1)
+                    if (player == Player1)
                     {
-                        System.Console.WriteLine("Selecciona la ficha que desee escrbiendo su número correspondiente");
+                        System.Console.WriteLine("Selecciona la token que desee escrbiendo su número correspondiente");
                         System.Console.WriteLine("1 - Nombre : Sprint, Velocidad : 1, Poder : Avanzar 4 casillas, Tiempo de enfriamiento : 3");
-                        System.Console.WriteLine("2 - Nombre : Fortaleza, Velocidad : 1, Poder : Avanzar por encima de obstáculos, Tiempo de enfriamiento : 4");
-                        System.Console.WriteLine("3 - Nombre : Reloj de arena, Velocidad : 1, Poder : Extender el tiempo de enfriamiento de otra ficha, Tiempo de enfriamiento : 3");
-                        System.Console.WriteLine("4 - Nombre : Invisibilidad, Velocidad : 1, Poder : Desactiva trampas, Tiempo de enfriamiento : 2");
-                        System.Console.WriteLine("5 - Nombre : Saltadora, Velocidad : 1, Poder : Puede avanzar por encima de obstáculos, Tiempo de enfriamiento : 3");
-                        SeleccionarFichas (1);
+                        System.Console.WriteLine("2 - Nombre : Fortress, Velocidad : 1, Poder : Avanzar por encima de obstáculos, Tiempo de enfriamiento : 4");
+                        System.Console.WriteLine("3 - Nombre : Clock de arena, Velocidad : 1, Poder : Extender el tiempo de enfriamiento de otra ficha, Tiempo de enfriamiento : 3");
+                        System.Console.WriteLine("4 - Nombre : Ghost, Velocidad : 1, Poder : Desactiva trampas, Tiempo de enfriamiento : 2");
+                        System.Console.WriteLine("5 - Nombre : Jumper, Velocidad : 1, Poder : Puede avanzar por encima de obstáculos, Tiempo de enfriamiento : 3");
+                        SelectToken (1);
                     }
                     else 
                     {
-                        System.Console.WriteLine("Selecciona la ficha que desee escrbiendo su número correspondiente");
-                        System.Console.WriteLine("6 - Nombre : Retroceso, Velocidad : 1, Poder : Puede anular su movimiento, Tiempo de enfriamiento : 2");
-                        System.Console.WriteLine("7 - Nombre : Trampero, Velocidad : 1, Poder : Desactiva trampas, Tiempo de enfriamiento : 2");
-                        System.Console.WriteLine("8 - Nombre : Fuego, Velocidad : 1, Poder : Puede destruir obstaculos y trampas, Tiempo de enfriamiento : 3");
-                        System.Console.WriteLine("9 - Nombre : Retraso, Velocidad : 1, Poder : Hacer retroceder a otro jugador un movimiento, Tiempo de enfriamiento : 2");
-                        System.Console.WriteLine("10 - Nombre : Intercambio, Velocidad : 1, Poder : Permite intercambiar su posicion con la de otra ficha cualquiera, Tiempo de enfriamiento : 5");
-                        SeleccionarFichas(2);
+                        System.Console.WriteLine("Selecciona la token que desee escrbiendo su número correspondiente");
+                        System.Console.WriteLine("6 - Nombre : Recoil, Velocidad : 1, Poder : Puede anular su movimiento, Tiempo de enfriamiento : 2");
+                        System.Console.WriteLine("7 - Nombre : Trapper, Velocidad : 1, Poder : Desactiva traps, Tiempo de enfriamiento : 2");
+                        System.Console.WriteLine("8 - Nombre : Fire, Velocidad : 1, Poder : Puede destruir obstáculos y trampas, Tiempo de enfriamiento : 3");
+                        System.Console.WriteLine("9 - Nombre : Backwards, Velocidad : 1, Poder : Hacer retroceder a otro jugador un movimiento, Tiempo de enfriamiento : 2");
+                        System.Console.WriteLine("10 - Nombre : Exchange, Velocidad : 1, Poder : Permite intercambiar su posición con la de otra ficha cualquiera, Tiempo de enfriamiento : 5");
+                        SelectToken(2);
                     }
                 }
-                public void SeleccionarFichas(int jugador)
+                public void SelectToken(int player)
                 {
-                    if (jugador == 1)
+                    if (player == 1)
                     {
                         try
                         {
-                            int ficha1 = int.Parse(Console.ReadLine()??string.Empty);
-                            if (ficha1 < 1 || ficha1 > 5)
+                            int token1 = int.Parse(Console.ReadLine()??string.Empty);
+                            if (token1 < 1 || token1 > 5)
                             {
                                 System.Console.WriteLine("escribe un número en el rango correspondiente");
-                                SeleccionarFichas(1);
+                                SelectToken(1);
                             }
                             else 
                             {
-                                System.Console.WriteLine("Has seleccionado la ficha numero " + ficha1 + "!!");
-                                jugador1.ficha = FichasPlayer1[ficha1 - 1];
+                                System.Console.WriteLine("Has seleccionado la ficha número " + token1 + "!!");
+                                Player1.token = TokenPlayer1[token1 - 1];
                                 System.Console.WriteLine("Presiona una tecla para continuar");
                                 Console.ReadKey();
                             }
@@ -135,23 +137,23 @@
                         catch(Exception)
                         {
                             System.Console.WriteLine("Escribe un número correcto");
-                            SeleccionarFichas(1);
+                            SelectToken(1);
                         }
                     }
-                    else if (jugador == 2)
+                    else if (player == 2)
                     {
-                        int ficha2 = int.Parse(Console.ReadLine()??string.Empty);
+                        int token2 = int.Parse(Console.ReadLine()??string.Empty);
                         try
                         {
-                            if (ficha2 < 6 || ficha2 > 10)
+                            if (token2 < 6 || token2 > 10)
                             {
                                 System.Console.WriteLine("escribe un número en el rango correspondiente");
-                                SeleccionarFichas(2);
+                                SelectToken(2);
                             }
                             else 
                             {
-                                System.Console.WriteLine("Has seleccionado la ficha número " + ficha2 + "!!");
-                                jugador2.ficha = FichasPlayer2[ficha2 - 6];
+                                System.Console.WriteLine("Has seleccionado la token número " + token2 + "!!");
+                                Player2.token = TokenPlayer2[token2 - 6];
                                 System.Console.WriteLine("Presiona una tecla para continuar");
                                 Console.ReadKey();
                             }
@@ -159,36 +161,36 @@
                         catch (Exception)
                         {
                             System.Console.WriteLine("Escribe un número correcto");
-                            SeleccionarFichas(2);
+                            SelectToken(2);
                         }
                     }
                 }
-            public void MovimientoDeFichas(Ficha ficha, Jugador jugadoractual)
+            public void TokenMovement(Token token, Player currentPlayer)
             {
                 ConsoleKeyInfo tecla = Console.ReadKey(true);
                 if (tecla.Key == ConsoleKey.P)
                 {
-                    UsarPoder(jugadoractual);
+                    UsePower(currentPlayer);
                 }
-                jugadoractual.ficha.SafePos.Item1 = jugadoractual.ficha.posicion.Item1;
-                jugadoractual.ficha.SafePos.Item2 = jugadoractual.ficha.posicion.Item2;
+                currentPlayer.token.SafePos.Item1 = currentPlayer.token.position.Item1;
+                currentPlayer.token.SafePos.Item2 = currentPlayer.token.position.Item2;
                 try
                 {
-                    if (tecla.Key == ConsoleKey.UpArrow && MovimientoValido(ficha.posicion.Item1 - 1, ficha.posicion.Item2, jugadoractual))
+                    if (tecla.Key == ConsoleKey.UpArrow && ValidMovement(token.position.Item1 - 1, token.position.Item2, currentPlayer))
                     {
-                        ficha.posicion.Item1--;
+                        token.position.Item1--;
                     }
-                    else if (tecla.Key == ConsoleKey.DownArrow && MovimientoValido(ficha.posicion.Item1 + 1, ficha.posicion.Item2, jugadoractual))
+                    else if (tecla.Key == ConsoleKey.DownArrow && ValidMovement(token.position.Item1 + 1, token.position.Item2, currentPlayer))
                     {
-                        ficha.posicion.Item1 ++;
+                        token.position.Item1 ++;
                     }
-                    else if (tecla.Key == ConsoleKey.LeftArrow && MovimientoValido(ficha.posicion.Item1, ficha.posicion.Item2 - 1, jugadoractual))
+                    else if (tecla.Key == ConsoleKey.LeftArrow && ValidMovement(token.position.Item1, token.position.Item2 - 1, currentPlayer))
                     {
-                        ficha.posicion.Item2 --;
+                        token.position.Item2 --;
                     }
-                    else if (tecla.Key == ConsoleKey.RightArrow && MovimientoValido(ficha.posicion.Item1 , ficha.posicion.Item2 + 1, jugadoractual))
+                    else if (tecla.Key == ConsoleKey.RightArrow && ValidMovement(token.position.Item1 , token.position.Item2 + 1, currentPlayer))
                     {
-                        ficha.posicion.Item2 ++;
+                        token.position.Item2 ++;
                     }
                     else 
                     {
@@ -201,119 +203,120 @@
                     System.Console.WriteLine("Se ha ido fuera de los límites del tablero, pierde su turno");
                     Thread.Sleep(800);
                 }
-                laberinto.ImprimirLab();
+                Maze.PrintMaze();
             }
-        public bool MovimientoValido(int x, int y, Jugador jugadoractual)
+        public bool ValidMovement(int x, int y, Player currentPlayer)
         {
-            bool [,] mask = trampa.obstaculos();
-            if ((mask[x,y] || jugadoractual.ficha.IsActive) && PosVal(x, y, mask.GetLength(0), mask.GetLength(1))) return true;
+            bool [,] mask = trap.maskObs;
+            if ((mask[x,y] || currentPlayer.token.IsActive) && PosVal(x, y, mask.GetLength(0), mask.GetLength(1))) return true;
             return false;
         }
-        public void IncrementarTurno(Jugador jugadoractual)
+        public void IncreaseShift(Player currentPlayer)
         {
-            jugadoractual.ficha.TurnosDeRecarga ++;
+            currentPlayer.token.Recharge ++;
         }
-        public bool PuedeUsarPoder(Jugador jugadoractual)
+        public bool CanUsePower(Player currentPlayer)
         {
-            return jugadoractual.ficha.TurnosDeRecarga >= jugadoractual.ficha.TiempoDeEnfriamiento;
+            return currentPlayer.token.Recharge >= currentPlayer.token.Cooldown;
         }
-        public void UsarPoder(Jugador jugadoractual)
+        public void UsePower(Player currentPlayer)
         {
-            if (PuedeUsarPoder(jugadoractual)) 
+            if (CanUsePower(currentPlayer)) 
             {
-                switch(jugadoractual.ficha.Poderficha)
+                switch(currentPlayer.token.TokenPower)
                 {
-                    case Poderes.sprint:
-                    Sprint(jugador1.ficha, jugador1);
+                    case Powers.sprint:
+                    Sprint(Player1.token, Player1);
                     break;
-                    case Poderes.destroyer:
-                    Destroyer(jugador2);
+                    case Powers.destroyer:
+                    Destroyer(Player2);
                     break;
-                    case Poderes.fortaleza:
-                    Fortaleza(jugador1);
+                    case Powers.fortress:
+                    Fortress(Player1);
                     break;
-                    case Poderes.reloj:
-                    Reloj();
+                    case Powers.clock:
+                    Clock();
                     break;
-                    case Poderes.invisibilidad:
-                    Invisibilidad(jugador1);
+                    case Powers.ghost:
+                    Ghost(Player1);
                     break;
-                    case Poderes.retraso:
-                    Retraso(jugador2);
+                    case Powers.backwards:
+                    Backwards(Player2);
                     break;
-                    case Poderes.retroceso:
-                    Retroceso(jugador2);
+                    case Powers.recoil:
+                    Recoil(Player2);
                     break;
-                    case Poderes.saltar:
-                    Saltadora(jugador1);
+                    case Powers.jump:
+                    Jumper(Player1);
                     break;
-                    case Poderes.intercambio:
-                    Intercambio(jugador2);
+                    case Powers.exchange:
+                    Exchange(Player2);
                     break;
-                    case Poderes.trampero:
-                    Invisibilidad(jugador2);
+                    case Powers.trapper:
+                    Ghost(Player2);
                     break;
                 }
-                jugadoractual.ficha.TurnosDeRecarga = 0;
-                MovimientoDeFichas(jugadoractual.ficha, jugadoractual);
+                currentPlayer.token.Recharge = 0;
+                TokenMovement(currentPlayer.token, currentPlayer);
             }
             else
             {
                 System.Console.WriteLine("No puede usar el poder");
-                MovimientoDeFichas(jugadoractual.ficha, jugadoractual);
+                TokenMovement(currentPlayer.token, currentPlayer);
             }
         }
-        public void CaerEnTrampa(Jugador jugadoractual)
+        public void RunIntoTraps(Player currentPlayer)
         {
-            if (trampa.maskInt[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] == 2)
+            if (trap.maskInt[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] == 2)
             {
-                trampa.mask[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] = true;
-                trampa.maskInt[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] = 0;
-                jugadoractual.ficha.ColocarFicha(0,0);
+                trap.mask[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] = true;
+                trap.maskInt[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] = 0;
+                currentPlayer.token.SetToken(0,0);
                 System.Console.WriteLine("has caído en una trampa");
-                laberinto.ImprimirLab();
                 Thread.Sleep(800);
+                Maze.PrintMaze();
                 return;
             }
-            else if (trampa.maskInt[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] == 3)
+            else if (trap.maskInt[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] == 3)
             {
-                if (MovimientoValido(jugadoractual.ficha.posicion.Item1 - 1, jugadoractual.ficha.posicion.Item2 - 1, jugadoractual))
+                if (ValidMovement(currentPlayer.token.position.Item1 - 1, currentPlayer.token.position.Item2 - 1, currentPlayer))
                 {
-                    trampa.mask[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] = true;
-                    trampa.maskInt[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] = 0;
-                    jugadoractual.ficha.ColocarFicha(jugadoractual.ficha.posicion.Item1 - 1, jugadoractual.ficha.posicion.Item2 - 1);
+                    trap.mask[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] = true;
+                    trap.maskInt[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] = 0;
+                    currentPlayer.token.SetToken(currentPlayer.token.position.Item1 - 1, currentPlayer.token.position.Item2 - 1);
                     System.Console.WriteLine("has caído en una trampa");
-                    laberinto.ImprimirLab();
                     Thread.Sleep(800);
+                    Maze.PrintMaze();
                     return;
                 }
                 else
                 {
-                    trampa.mask[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] = true;
-                    trampa.maskInt[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] = 0;
-                    ValPos(jugadoractual.ficha.posicion.Item1 - 1, jugadoractual.ficha.posicion.Item2 - 1, trampa.mask, jugadoractual);
+                    trap.mask[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] = true;
+                    trap.maskInt[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] = 0;
+                    ValPos(currentPlayer.token.position.Item1 - 1, currentPlayer.token.position.Item2 - 1, trap.mask, currentPlayer);
                     System.Console.WriteLine("has caído en una trampa");
-                    laberinto.ImprimirLab();
                     Thread.Sleep(800);
+                    Maze.PrintMaze();
                     return;
                 }
             }
-            else if (trampa.maskInt[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] == 4)
+            else if (trap.maskInt[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] == 4)
             {
-                trampa.mask[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] = true;
-                trampa.maskInt[jugadoractual.ficha.posicion.Item1, jugadoractual.ficha.posicion.Item2] = 0;
-                NopuedeUsarPoder(jugadoractual);
+                trap.mask[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] = true;
+                trap.maskInt[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] = 0;
+                CannotUsePower(currentPlayer);
                 System.Console.WriteLine("has caído en una trampa");
-                laberinto.ImprimirLab();
                 Thread.Sleep(800);
+                Maze.PrintMaze();
                 return;
             }
         }
-        public void NopuedeUsarPoder(Jugador jugadoractual)
+        public void CannotUsePower(Player currentPlayer)
         {
-            jugadoractual.ficha.TurnosDeRecarga = 0;
+            currentPlayer.token.Cooldown = 6;
+            currentPlayer.token.Recharge = 0;
         }
-        private void ValPos (int h, int k, bool [,] mask, Jugador jugadoractual)
+        private void ValPos (int h, int k, bool [,] mask, Player currentPlayer)
         {
             for (int i = 1; i < h; i++)
             {
@@ -326,34 +329,34 @@
                 {
                     if (mask[i,j]) 
                     {
-                        jugadoractual.ficha.ColocarFicha(i,j);
+                        currentPlayer.token.SetToken(i,j);
                         return;
                     }
                 }
             }
         }
-        public void Sprint(Ficha ficha, Jugador jugadoractual)
+        public void Sprint(Token token, Player currentPlayer)
         {
             for (int i = 0; i < 4; i++)
             {
                 ConsoleKeyInfo tecla = Console.ReadKey(true);
                 try
                 {
-                    if (tecla.Key == ConsoleKey.UpArrow && MovimientoValido(ficha.posicion.Item1 - 1, ficha.posicion.Item2, jugadoractual))
+                    if (tecla.Key == ConsoleKey.UpArrow && ValidMovement(token.position.Item1 - 1, token.position.Item2, currentPlayer))
                     {
-                        ficha.posicion.Item1--;
+                        token.position.Item1--;
                     }
-                    else if (tecla.Key == ConsoleKey.DownArrow && MovimientoValido(ficha.posicion.Item1 + 1, ficha.posicion.Item2, jugadoractual))
+                    else if (tecla.Key == ConsoleKey.DownArrow && ValidMovement(token.position.Item1 + 1, token.position.Item2, currentPlayer))
                     {
-                        ficha.posicion.Item1 ++;
+                        token.position.Item1 ++;
                     }
-                    else if (tecla.Key == ConsoleKey.LeftArrow && MovimientoValido(ficha.posicion.Item1, ficha.posicion.Item2 - 1, jugadoractual))
+                    else if (tecla.Key == ConsoleKey.LeftArrow && ValidMovement(token.position.Item1, token.position.Item2 - 1, currentPlayer))
                     {
-                        ficha.posicion.Item2 --;
+                        token.position.Item2 --;
                     }
-                    else if (tecla.Key == ConsoleKey.RightArrow && MovimientoValido(ficha.posicion.Item1 , ficha.posicion.Item2 + 1, jugadoractual))
+                    else if (tecla.Key == ConsoleKey.RightArrow && ValidMovement(token.position.Item1 , token.position.Item2 + 1, currentPlayer))
                     {
-                        ficha.posicion.Item2 ++;                    
+                        token.position.Item2 ++;                    
                     }
                     else 
                     {
@@ -365,57 +368,58 @@
                     System.Console.WriteLine("Se ha ido fuera de los límites del tablero, pierde su turno");
                     Thread.Sleep(800);
                 }
-                laberinto.ImprimirLab();
+                Maze.PrintMaze();
             }
-            jugadoractual.ficha.TiempoDeEnfriamiento = 3;
+            currentPlayer.token.Cooldown = 3;
         }
-        public void Fortaleza (Jugador jugador)
+        public void Fortress (Player player)
         {
-            jugador.ficha.IsActive = true;
-            jugador.ficha.TiempoDeEnfriamiento = 4;
+            player.token.IsActive = true;
+            player.token.Cooldown = 4;
         }
-        public void Reloj()
+        public void Clock()
         {
-            jugador2.ficha.TiempoDeEnfriamiento = 6;
-            jugador2.ficha.TurnosDeRecarga = 0;
-            jugador1.ficha.TiempoDeEnfriamiento = 3; 
+            Player2.token.Cooldown = 6;
+            Player2.token.Recharge = 0;
+            Player1.token.Cooldown = 3; 
         }
-        public void Invisibilidad(Jugador jugador)
+        public void Ghost(Player player)
         {
-            jugador.ficha.IsActive = true;
-            jugador.ficha.TiempoDeEnfriamiento = 4;
+            player.token.IsActive = true;
+            player.token.Cooldown = 4;
                         
         }
-        public void Saltadora(Jugador jugador)
+        public void Jumper(Player player)
         {
-            jugador.ficha.IsActive = true;
-            jugador.ficha.TiempoDeEnfriamiento = 5;
+            player.token.IsActive = true;
+            player.token.Cooldown = 5;
         }
-        public void Retroceso(Jugador jugador)
+        public void Recoil(Player player)
         {
-            jugador.ficha.posicion.Item1 = jugador.ficha.SafePos.Item1;
-            jugador.ficha.posicion.Item2 = jugador.ficha.SafePos.Item2;
-            laberinto.ImprimirLab();
-            jugador.ficha.TiempoDeEnfriamiento = 2;
+            player.token.position.Item1 = player.token.SafePos.Item1;
+            player.token.position.Item2 = player.token.SafePos.Item2;
+            Maze.PrintMaze();
+            player.token.Cooldown = 2;
         }
-        public void Destroyer(Jugador jugador)
+        public void Destroyer(Player player)
         {
-            jugador.ficha.IsActive = true;
-            jugador.ficha.TiempoDeEnfriamiento = 6;
+            player.token.IsActive = true;
+            player.token.Cooldown = 6;
         }
-        public void Retraso(Jugador jugador)
+        public void Backwards(Player player)
         {
-            jugador1.ficha.posicion.Item1 = jugador1.ficha.SafePos.Item1;
-            jugador1.ficha.posicion.Item2 = jugador1.ficha.SafePos.Item2;
-            laberinto.ImprimirLab();
-            jugador.ficha.TiempoDeEnfriamiento = 2;
+            Player1.token.position.Item1 = Player1.token.SafePos.Item1;
+            Player1.token.position.Item2 = Player1.token.SafePos.Item2;
+            Maze.PrintMaze();
+            player.token.Cooldown = 2;
         }
-        public void Intercambio(Jugador jugador)
+        public void Exchange(Player player)
         {
-            ((jugador2.ficha.posicion.Item1, jugador2.ficha.posicion.Item2), (jugador1.ficha.posicion.Item1, jugador1.ficha.posicion.Item2)) = ((jugador1.ficha.posicion.Item1, jugador1.ficha.posicion.Item2), (jugador2.ficha.posicion.Item1, jugador2.ficha.posicion.Item2));
-            laberinto.ImprimirLab();
-            jugador.ficha.TiempoDeEnfriamiento = 5;
+            ((Player2.token.position.Item1, Player2.token.position.Item2), (Player1.token.position.Item1, Player1.token.position.Item2)) = ((Player1.token.position.Item1, Player1.token.position.Item2), (Player2.token.position.Item1, Player2.token.position.Item2));
             System.Console.WriteLine("Se han intercambiado las posiciones de los jugadores");
+            Thread.Sleep(800);
+            Maze.PrintMaze();
+            player.token.Cooldown = 5;
             return; 
         }
         private static bool PosVal(int vf, int vc, int filas, int columnas)
@@ -424,14 +428,18 @@
         }
         public bool EndGame()
         {
-            if (jugador1.ficha.posicion == (laberinto.Filas - 1, laberinto.Columnas - 1))
+            if (Player1.token.position == (Maze.Rows - 1, Maze.Columns - 1))
             {
-                System.Console.WriteLine("Jugador 1 ha ganado");
+                System.Console.WriteLine("Jugador 1 ha ganado!!!!");
+                System.Console.WriteLine("Toque una tecla para finalizar el juego");
+                Console.ReadKey();
                 return true;
             }
-            else if(jugador2.ficha.posicion == (laberinto.Filas - 1, laberinto.Columnas - 1))
+            else if(Player2.token.position == (Maze.Rows - 1, Maze.Columns - 1))
             {
                 System.Console.WriteLine("Jugador 2 ha ganado");
+                System.Console.WriteLine("Toque una tecla para finalizar el juego");
+                Console.ReadKey();
                 return true;
             }
             return false;

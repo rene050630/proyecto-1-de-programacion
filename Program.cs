@@ -1,4 +1,4 @@
-public class PrincipalClass
+public class Program
 {
     static void Main()
     {
