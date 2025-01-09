@@ -1,5 +1,7 @@
 
-    public class Maze 
+using System.Runtime.ExceptionServices;
+
+public class Maze 
     {
         public bool [,] maze;
         public int Rows;
@@ -21,7 +23,7 @@
             Random random = new Random();
             for (int i = 1; i < Rows; i++)
             {
-                for (int j = 1; j < Columns - 1; j++)
+                for (int j = 1; j < Columns; j++)
                 {
                     maze [i,j] = random.Next(2) == 1;
                 }
@@ -52,27 +54,27 @@
                     {
                         if (player1.token.position == (i,j) && player2.token.position == (i,j))
                         {
-                            System.Console.Write("a b");
+                            System.Console.Write($"{player1.token.Emoji}{player2.token.Emoji}");
                             count ++;
                         }
                         else if (player1.token.position == (i,j))
                         {
-                            System.Console.Write(" a ");
+                            System.Console.Write($" {player1.token.Emoji} ");
                             count ++;
                         }
                         else if (player2.token.position == (i,j))
                         {
-                            System.Console.Write(" b ");
+                            System.Console.Write($" {player2.token.Emoji} ");
                             count ++;
                         }
                         else if (!maze[i,j])
                         {
-                            System.Console.Write(" ■ ");
+                            System.Console.Write(" ⬜ ");
                             count ++;
                         }
                         else
                         {
-                            System.Console.Write(" □ ");
+                            System.Console.Write(" ⬛ ");
                             count ++;
                         }
                         

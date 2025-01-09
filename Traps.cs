@@ -20,14 +20,6 @@ public class Trap
         maskInt[Maze.Rows - 1, Maze.Columns - 1] = 0;
         mask[0,0] = true;
         maskInt[0,0] = 0;
-        for (int i = 0; i < maskInt.GetLength(0); i++)
-        {
-            for (int j = 0; j < maskObs.GetLength(1); j++)
-            {
-                System.Console.Write(maskInt[i,j] + "\t");
-            }
-            System.Console.WriteLine();
-        }
         return mask;
     }
     public void Obstacle()
@@ -104,7 +96,7 @@ public class Trap
                         mask [i,j] = false; 
                         count ++;
                     }
-                    if (count == 4) return maskInt;
+                    if (count == 10) return maskInt;
                 }
             }
             return maskInt;
@@ -119,11 +111,11 @@ public class Trap
                 {
                     if (maskInt [i,j] == 0)
                     {
-                        mask [i, j] = false;
-                        maskInt[i,j] = 3;
+                        mask [j, i] = false;
+                        maskInt[j, i] = 3;
                         count ++;
                     }
-                    if (count == 4) return maskInt;
+                    if (count == 10) return maskInt;
                 }
             }
             return maskInt;
@@ -139,11 +131,11 @@ public class Trap
                 {
                     if (maskInt [i,j] == 0)
                     {
-                        mask [i, j] = false;
-                        maskInt[i,j] = 4;
+                        mask [j, j] = false;
+                        maskInt[j,j] = 4;
                         count ++;
                     }
-                    if (count == 4) return maskInt;
+                    if (count == 6) return maskInt;
                 }
             }
             return maskInt;

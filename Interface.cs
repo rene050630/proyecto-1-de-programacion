@@ -1,25 +1,25 @@
-internal class Vetana(int ancho, int largo)
+public class Window
 {
-    int ancho = ancho;
-    int largo = largo;
-    private void Init()
-    {
-    Console.SetWindowSize(ancho, largo);
-    }
-    // public void ShowMenu()
-    // {
-    //   //muestra el menu
-    // }
-    // public void ShowLaberinto()
-    // {
-    //   //muestra interfaz del juego
-    // }
-    // public void Victoria()
-    // {
-    //   //Muestra pantalla de victoria
-    // }
-    // public void Update()
-    // {
-    //   //actualiza la interfaz
-    // }
+    public void Menu()
+        {
+            System.Console.WriteLine("BIENVENIDO AL MAZE RUNNER 🛣🛣🛣");
+            System.Console.WriteLine("Búsquese un amigo para jugar");
+            System.Console.WriteLine("TEN CUIDADO CON LAS TRAMPAS Y LOS OBSTÁCULOS INVISIBLES");
+            System.Console.WriteLine("(Enter) Inicio del juego");
+            System.Console.WriteLine("(Esc) Salir");
+            ConsoleKeyInfo tecla = Console.ReadKey(true);
+            if (tecla.Key == ConsoleKey.Enter)
+            {
+                for (int i = 3; i >= 0; i --)
+                {
+                    System.Console.WriteLine("El juego inicia en " + i);
+                    Thread.Sleep(1000);
+                }
+                return;
+            }
+            else if(tecla.Key == ConsoleKey.Escape)
+            {
+                Environment.Exit(0);
+            }
+        }
 }

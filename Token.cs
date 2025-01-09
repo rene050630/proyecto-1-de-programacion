@@ -10,7 +10,8 @@
         public int Recharge;
         public int Number;
         public (int, int) position;
-        public Token (string name, int Speed, int Cooldown, Powers TokenPower ,int Number)
+        public string Emoji;
+        public Token (string name, int Speed, int Cooldown, Powers TokenPower ,int Number, string Emoji)
         {
             this.name = name;
             this.Speed = Speed;
@@ -20,6 +21,7 @@
             Recharge = 0;
             position = (0, 0);
             SafePos = (0,0);
+            this.Emoji = Emoji;
         }
         public bool EstaEnPos(int x, int y)
         {
