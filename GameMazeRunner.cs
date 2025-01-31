@@ -183,42 +183,42 @@
                 if (End()) return;
                 try
                 {
-                    ConsoleKeyInfo tecla = Console.ReadKey(true);
+                    ConsoleKeyInfo key = Console.ReadKey(true);
                     currentPlayer.token.SafePos.Item1 = currentPlayer.token.position.Item1;
                     currentPlayer.token.SafePos.Item2 = currentPlayer.token.position.Item2;
-                    if (tecla.Key == ConsoleKey.P)
+                    if (key.Key == ConsoleKey.P)
                     {
                         UsePower(currentPlayer);
                     }
-                    else if (tecla.Key == ConsoleKey.UpArrow && ValidMovement(token.position.Item1 - 1, token.position.Item2, currentPlayer))
+                    else if (key.Key == ConsoleKey.UpArrow && ValidMovement(token.position.Item1 - 1, token.position.Item2, currentPlayer))
                     {
                         token.position.Item1--;
                     }
-                    else if (tecla.Key == ConsoleKey.DownArrow && ValidMovement(token.position.Item1 + 1, token.position.Item2, currentPlayer))
+                    else if (key.Key == ConsoleKey.DownArrow && ValidMovement(token.position.Item1 + 1, token.position.Item2, currentPlayer))
                     {
                         token.position.Item1 ++;
                     }
-                    else if (tecla.Key == ConsoleKey.LeftArrow && ValidMovement(token.position.Item1, token.position.Item2 - 1, currentPlayer))
+                    else if (key.Key == ConsoleKey.LeftArrow && ValidMovement(token.position.Item1, token.position.Item2 - 1, currentPlayer))
                     {
                         token.position.Item2 --;
                     }
-                    else if (tecla.Key == ConsoleKey.RightArrow && ValidMovement(token.position.Item1 , token.position.Item2 + 1, currentPlayer))
+                    else if (key.Key == ConsoleKey.RightArrow && ValidMovement(token.position.Item1 , token.position.Item2 + 1, currentPlayer))
                     {
                         token.position.Item2 ++;
                     }
                     else
                     {
                         System.Console.WriteLine("Cuidadoooo!!! ⛔⛔⛔");
-                        Thread.Sleep(100);
+                        Thread.Sleep(500);
                         System.Console.WriteLine("Has chocado contra un obstáculo");
-                        Thread.Sleep(800);
+                        Thread.Sleep(1500);
                     }
                 }
                 catch (Exception)
                 {
                     System.Console.WriteLine("Upsss, 😬😬😬");
                     System.Console.WriteLine("Se ha ido fuera de los límites del tablero, pierde su turno");
-                    Thread.Sleep(800);
+                    Thread.Sleep(1500);
                 }
                 Maze.PrintMaze();
             }
@@ -245,7 +245,7 @@
             if (CanUsePower(currentPlayer)) 
             {
                 System.Console.WriteLine(currentPlayer.token.name + ": ha activado el poder 🥵🥵🥵");
-                Thread.Sleep(800);
+                Thread.Sleep(1500);
                 switch(currentPlayer.token.TokenPower)
                 {
                     case Powers.sprint:
@@ -297,9 +297,9 @@
                 trap.maskInt[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] = 0;
                 currentPlayer.token.SetToken(0,0);
                 System.Console.WriteLine("Has caído en una trampa ☣☣☣");
-                Thread.Sleep(600);
-                System.Console.WriteLine("Su posición se retrasa hasta el inicio");
                 Thread.Sleep(800);
+                System.Console.WriteLine("Su posición se retrasa hasta el inicio");
+                Thread.Sleep(1500);
                 Maze.PrintMaze();
                 return;
             }
@@ -311,9 +311,9 @@
                     trap.maskInt[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] = 0;
                     currentPlayer.token.SetToken(currentPlayer.token.position.Item1 - 1, currentPlayer.token.position.Item2 - 1);
                     System.Console.WriteLine("Has caído en una trampa ☣☣☣");
-                    Thread.Sleep(600);
-                    System.Console.WriteLine("Su posición se retrasa algunas casillas");
                     Thread.Sleep(800);
+                    System.Console.WriteLine("Su posición se retrasa algunas casillas");
+                    Thread.Sleep(1500);
                     Maze.PrintMaze();
                     return;
                 }
@@ -322,12 +322,12 @@
                     trap.mask[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] = true;
                     trap.maskInt[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] = 0;
                     System.Console.WriteLine("Has caído en una trampa ☣☣☣");
-                    Thread.Sleep(600);
+                    Thread.Sleep(800);
                     if (ValPos(currentPlayer.token.position.Item1 - 1, currentPlayer.token.position.Item2 - 1, trap.mask, currentPlayer))
                     System.Console.WriteLine("Su posición se retrasa algunas casillas");
                     else 
                     System.Console.Write(" pero no hay movimientos posibles, tuviste suerte");
-                    Thread.Sleep(800);
+                    Thread.Sleep(1500);
                     Maze.PrintMaze();
                     return;
                 }
@@ -338,9 +338,9 @@
                 trap.maskInt[currentPlayer.token.position.Item1, currentPlayer.token.position.Item2] = 0;
                 CannotUsePower(currentPlayer);
                 System.Console.WriteLine("Has caído en una trampa ☣☣☣");
-                Thread.Sleep(600);
-                System.Console.WriteLine("Su Tiempo de enfriamiento se ha incrementado");
                 Thread.Sleep(800);
+                System.Console.WriteLine("Su Tiempo de enfriamiento se ha incrementado");
+                Thread.Sleep(1500);
                 Maze.PrintMaze();
                 return;
             }
@@ -374,25 +374,25 @@
             System.Console.WriteLine("Puedes avanzar 5 pasos 🤗🤗🤗");
             for (int i = 0; i < 4; i++)
             {
-                ConsoleKeyInfo tecla = Console.ReadKey(true);
+                ConsoleKeyInfo key = Console.ReadKey(true);
                 try
                 {
-                    if (tecla.Key == ConsoleKey.UpArrow && ValidMovement(token.position.Item1 - 1, token.position.Item2, currentPlayer))
+                    if (key.Key == ConsoleKey.UpArrow && ValidMovement(token.position.Item1 - 1, token.position.Item2, currentPlayer))
                     {
                         token.position.Item1--;
                         Maze.PrintMaze();
                     }
-                    else if (tecla.Key == ConsoleKey.DownArrow && ValidMovement(token.position.Item1 + 1, token.position.Item2, currentPlayer))
+                    else if (key.Key == ConsoleKey.DownArrow && ValidMovement(token.position.Item1 + 1, token.position.Item2, currentPlayer))
                     {
                         token.position.Item1 ++;
                         Maze.PrintMaze();
                     }
-                    else if (tecla.Key == ConsoleKey.LeftArrow && ValidMovement(token.position.Item1, token.position.Item2 - 1, currentPlayer))
+                    else if (key.Key == ConsoleKey.LeftArrow && ValidMovement(token.position.Item1, token.position.Item2 - 1, currentPlayer))
                     {
                         token.position.Item2 --;
                         Maze.PrintMaze();
                     }
-                    else if (tecla.Key == ConsoleKey.RightArrow && ValidMovement(token.position.Item1 , token.position.Item2 + 1, currentPlayer))
+                    else if (key.Key == ConsoleKey.RightArrow && ValidMovement(token.position.Item1 , token.position.Item2 + 1, currentPlayer))
                     {
                         token.position.Item2 ++;  
                         Maze.PrintMaze();                  
@@ -402,7 +402,7 @@
                         System.Console.WriteLine("Cuidadoooo!!! ⛔⛔⛔");
                         Thread.Sleep(100);
                         System.Console.WriteLine("Has chocado contra un obstáculo");
-                        Thread.Sleep(800);
+                        Thread.Sleep(1500);
                     }
                     if (End())
                     {
@@ -414,7 +414,7 @@
                 {
                     System.Console.WriteLine("Upsss, 😬😬😬");
                     System.Console.WriteLine("Se ha ido fuera de los límites del tablero");
-                    Thread.Sleep(800);
+                    Thread.Sleep(1500);
                 }
             }
             currentPlayer.token.Cooldown = 3;
@@ -458,7 +458,7 @@
             Player2.token.position.Item1 = Player2.token.SafePos.Item1;
             Player2.token.position.Item2 = Player2.token.SafePos.Item2;
             System.Console.WriteLine("Se ha anulado el movimiento de la otra ficha 😄😄😄");
-            Thread.Sleep(800);
+            Thread.Sleep(1500);
             Maze.PrintMaze();
             player.token.Cooldown = 2;
         }
@@ -466,7 +466,7 @@
         {
             ((Player2.token.position.Item1, Player2.token.position.Item2), (Player1.token.position.Item1, Player1.token.position.Item2)) = ((Player1.token.position.Item1, Player1.token.position.Item2), (Player2.token.position.Item1, Player2.token.position.Item2));
             System.Console.WriteLine("Se han intercambiado las posiciones de los jugadores 🧐🧐🧐");
-            Thread.Sleep(800);
+            Thread.Sleep(1500);
             Maze.PrintMaze();
             player.token.Cooldown = 5;
             return; 
@@ -479,14 +479,14 @@
         {
             if (Player1.token.position == (Maze.Rows - 1, Maze.Columns - 1))
             {
-                System.Console.WriteLine("Enhorabuena, Jugador 1 ha ganado!!!! 🥳🥳🥳");
+                System.Console.WriteLine($"Enhorabuena, {Player1.name} ha ganado!!!! 🥳🥳🥳");
                 System.Console.WriteLine("Toque una tecla para finalizar el juego");
                 Console.ReadKey(true);
                 return true;
             }
             else if(Player2.token.position == (Maze.Rows - 1, Maze.Columns - 1))
             {
-                System.Console.WriteLine("Enhorabuena, Jugador 2 ha ganado!!!! 🥳🥳🥳");
+                System.Console.WriteLine($"Enhorabuena, {Player2.name} ha ganado!!!! 🥳🥳🥳");
                 System.Console.WriteLine("Toque una tecla para finalizar el juego");
                 Console.ReadKey(true);
                 return true;

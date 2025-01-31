@@ -7,8 +7,8 @@ public class Window
             System.Console.WriteLine("TEN CUIDADO CON LAS TRAMPAS Y LOS OBSTÁCULOS INVISIBLES");
             System.Console.WriteLine("(Enter) Inicio del juego");
             System.Console.WriteLine("(Esc) Salir");
-            ConsoleKeyInfo tecla = Console.ReadKey(true);
-            if (tecla.Key == ConsoleKey.Enter)
+            ConsoleKeyInfo key = Console.ReadKey(true);
+            if (key.Key == ConsoleKey.Enter)
             {
                 for (int i = 3; i >= 0; i --)
                 {
@@ -17,7 +17,7 @@ public class Window
                 }
                 return;
             }
-            else if(tecla.Key == ConsoleKey.Escape)
+            else if(key.Key == ConsoleKey.Escape)
             {
                 Environment.Exit(0);
             }
